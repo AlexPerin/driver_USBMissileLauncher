@@ -19,18 +19,16 @@ missile_usb *control;
 
 int main() {
 
-	int commande = 1;
+	int Dx = 200;	// de 0 à 640
+	int Dy = -100; // de 0 à 480 
+	
   int device_type = 1;
 
   init(&device_type);	
   
-  //int i;
-  
-  //for(i=4;i>0;i--){
+  traitement(Dx,Dy);
 
-  action(&device_type,commande);
-  
-  //}
+  //action(&device_type,commande);
 
   missile_usb_destroy(control);  
 

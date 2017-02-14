@@ -19,14 +19,12 @@ missile_usb *control;
   
   //---------------------------------------------------------------------------
 
-void action(int *device_type, int p_commande){
+void action(int p_commande){
 
   unsigned int set_fire = 0, set_left = 0, set_right = 0;
   unsigned int set_up = 0, set_down = 0, set_stop = 0;
   
-  fprintf(stderr,"1\n");
-  
-  int delay = 10; // butée = 3.5 s
+  int delay = 0; // butée = 3.5 s
 
   //---------------------------------------------------------------------------
 
@@ -36,18 +34,34 @@ void action(int *device_type, int p_commande){
 		set_down=1;
 		set_stop = 1;
 	}
-  set_right = 1;
-  //set_fire = 1;
-  //set_up = 1; 
-  set_left = 1;
-  //set_down = 1;
-  //set_stop = 1;  
+	else if(p_commande == 1){ //4 zones -> sens de la lecture 
+		set_left = 1; 
+		set_up = 1;
+		//set_stop = 1;
+	}
+	else if(p_commande == 2){
+		set_right = 1; 
+		set_up = 1;
+		//set_stop = 1;
+	}
+	else if(p_commande == 3){
+		set_left = 1; 
+		fprintf(stderr,"tour\n");
+		set_down = 1;
+		//set_stop = 1;
+	}
+	else if(p_commande == 4){
+		set_right = 1; 
+		set_down = 1;
+		//set_stop = 1;
+	}
+	else if(p_commande == 10){
+		set_fire = 1; 
+		//set_stop = 1;
+	}  
 
   char msg = 0x00;
-
-  switch (*device_type) {
-    
-  case DEVICE_TYPE_MISSILE_LAUNCHER:
+  
   
     if (set_left)
       msg |= MISSILE_LAUNCHER_CMD_LEFT; //masque de la commande en hexa
@@ -64,19 +78,11 @@ void action(int *device_type, int p_commande){
     if (set_fire)
       msg |= MISSILE_LAUNCHER_CMD_FIRE;
 
-    missile_do(control, msg, *device_type);
+    missile_do(control, msg, /*device_type*/DEVICE_TYPE_MISSILE_LAUNCHER);
     
     if (set_stop) {
       usleep(delay * 1000);
-      missile_do(control, MISSILE_LAUNCHER_CMD_STOP, *device_type);
+      missile_do(control, MISSILE_LAUNCHER_CMD_STOP, DEVICE_TYPE_MISSILE_LAUNCHER);
     }
-
-    break;
     
-  default:
-    printf("Device Type (%d) not implemented, please do it!\n",
-	   *device_type);
-    //return -1;
-    
-  }
 }
